@@ -37,9 +37,7 @@ class PolicyEngineDatabase:
                 self.initialize()
 
     def _create_pool(self):
-        instance_connection_name = (
-            "policyengine-api:us-central1:policyengine-api-data"
-        )
+        instance_connection_name = "policyengine-infrastructure:us-central1:policyengine-api-data-anrikus-dev"
         self.connector = Connector()
         db_user = "policyengine"
         db_pass = os.environ["POLICYENGINE_DB_PASSWORD"]
