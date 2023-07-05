@@ -26,7 +26,9 @@ class PolicyEngineDatabase:
         self.local = local
         if local:
             # Local development uses a sqlite database.
-            self.db_url = REPO / "policyengine_api" / "data" / "policyengine.db"
+            self.db_url = (
+                REPO / "policyengine_api" / "data" / "policyengine.db"
+            )
             if initialize or not Path(self.db_url).exists():
                 self.initialize()
         else:
@@ -35,9 +37,7 @@ class PolicyEngineDatabase:
                 self.initialize()
 
     def _create_pool(self):
-        instance_connection_name = (
-            "policyengine-infrastructure:us-central1:policyengine-api-data-anrikus-dev"
-        )
+        instance_connection_name = "policyengine-infrastructure:us-central1:policyengine-api-data-anrikus-dev"
         self.connector = Connector()
         db_user = "policyengine"
         db_pass = os.environ["POLICYENGINE_DB_PASSWORD"]

@@ -21,12 +21,17 @@ def get_average_time():
     """Get the average time for the last 10 jobs. Jobs might not have an end time (None)."""
     recent_jobs = [job for job in RECENT_JOBS.values() if job["end_time"]]
     # Get 10 most recently finishing jobs
-    recent_jobs = sorted(recent_jobs, key=lambda x: x["end_time"], reverse=True)[:10]
+    recent_jobs = sorted(
+        recent_jobs, key=lambda x: x["end_time"], reverse=True
+    )[:10]
     print(recent_jobs, RECENT_JOBS)
     if not recent_jobs:
         return 100
     total_time = sum(
-        [(job["end_time"] - job["start_time"]).total_seconds() for job in recent_jobs]
+        [
+            (job["end_time"] - job["start_time"]).total_seconds()
+            for job in recent_jobs
+        ]
     )
     return total_time / len(recent_jobs)
 
@@ -56,17 +61,21 @@ def get_economic_impact(
         baseline_policy_id or get_current_law_policy_id(country_id)
     )
 
-    default_region = country.metadata["result"]["economy_options"]["region"][0]["name"]
-    default_time_period = country.metadata["result"]["economy_options"]["time_period"][
+    default_region = country.metadata["result"]["economy_options"]["region"][
         0
     ]["name"]
+    default_time_period = country.metadata["result"]["economy_options"][
+        "time_period"
+    ][0]["name"]
 
     query_parameters = request.args
     options = dict(query_parameters)
     options = json.loads(json.dumps(options))
     region = options.pop("region", default_region)
     time_period = options.pop("time_period", default_time_period)
-    api_version = options.pop("version", COUNTRY_PACKAGE_VERSIONS.get(country_id))
+    api_version = options.pop(
+        "version", COUNTRY_PACKAGE_VERSIONS.get(country_id)
+    )
     options_hash = json.dumps(options, sort_keys=True)
 
     print("Checking if already calculated")
@@ -101,7 +110,9 @@ def get_economic_impact(
         start_date = datetime.datetime.strptime(
             computing_result["start_time"], "%Y-%m-%d %H:%M:%S.%f"
         )
-        seconds_elapsed = (datetime.datetime.now() - start_date).total_seconds()
+        seconds_elapsed = (
+            datetime.datetime.now() - start_date
+        ).total_seconds()
         if seconds_elapsed > 400:
             print(
                 f"Restarting computing job because it started {seconds_elapsed} seconds ago"
@@ -124,7 +135,9 @@ def get_economic_impact(
     job_id = f"reform_impact_{country_id}_{policy_id}_{baseline_policy_id}_{region}_{time_period}_{options_hash}_{api_version}"
 
     if len(result) == 0 or restarting:
-        RECENT_JOBS[job_id] = dict(start_time=datetime.datetime.now(), end_time=None)
+        RECENT_JOBS[job_id] = dict(
+            start_time=datetime.datetime.now(), end_time=None
+        )
         # First, add a 'computing' record
         local_database.query(
             f"INSERT INTO reform_impact (country_id, reform_policy_id, baseline_policy_id, region, time_period, options_json, options_hash, status, api_version, reform_impact_json, start_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
@@ -181,7 +194,9 @@ def get_economic_impact(
                 and result["status"] != "computing"
             ):
                 RECENT_JOBS[job_id]["end_time"] = datetime.datetime.now()
-            result["reform_impact_json"] = json.loads(result["reform_impact_json"])
+            result["reform_impact_json"] = json.loads(
+                result["reform_impact_json"]
+            )
             return dict(
                 status=result["status"],
                 average_time=get_average_time(),
@@ -192,7 +207,9 @@ def get_economic_impact(
         result = result[0]
         # If there are >100 jobs in the RECENT_JOBS dict, remove the oldest one
         if len(RECENT_JOBS) > 100:
-            oldest_job_id = min(RECENT_JOBS, key=lambda k: RECENT_JOBS[k]["start_time"])
+            oldest_job_id = min(
+                RECENT_JOBS, key=lambda k: RECENT_JOBS[k]["start_time"]
+            )
             del RECENT_JOBS[oldest_job_id]
         job = Job.fetch(job_id, connection=queue.connection)
         return dict(

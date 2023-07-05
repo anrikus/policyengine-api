@@ -31,7 +31,9 @@ def trigger_policy_analysis(prompt: str, prompt_id: int):
     for response in response:
         print("iterating over chunk")
         new_content = (
-            response.get("choices", [{}])[0].get("delta", {}).get("content", "")
+            response.get("choices", [{}])[0]
+            .get("delta", {})
+            .get("content", "")
         )
         if not new_content:
             continue
