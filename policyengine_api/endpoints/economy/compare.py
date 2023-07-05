@@ -3,10 +3,16 @@ import numpy as np
 
 
 def budgetary_impact(baseline: dict, reform: dict) -> dict:
-    budgetary_impact = baseline["total_net_income"] - reform["total_net_income"]
+    budgetary_impact = (
+        baseline["total_net_income"] - reform["total_net_income"]
+    )
     tax_revenue_impact = reform["total_tax"] - baseline["total_tax"]
-    state_tax_revenue_impact = reform["total_state_tax"] - baseline["total_state_tax"]
-    benefit_spending_impact = reform["total_benefits"] - baseline["total_benefits"]
+    state_tax_revenue_impact = (
+        reform["total_state_tax"] - baseline["total_state_tax"]
+    )
+    benefit_spending_impact = (
+        reform["total_benefits"] - baseline["total_benefits"]
+    )
     print(f"state tax revenue impact is {state_tax_revenue_impact}")
     return dict(
         budgetary_impact=budgetary_impact,
@@ -38,10 +44,12 @@ def decile_impact(baseline: dict, reform: dict) -> dict:
     decile = MicroSeries(baseline["household_income_decile"])
     income_change = reform_income - baseline_income
     rel_income_change_by_decile = (
-        income_change.groupby(decile).sum() / baseline_income.groupby(decile).sum()
+        income_change.groupby(decile).sum()
+        / baseline_income.groupby(decile).sum()
     )
     avg_income_change_by_decile = (
-        income_change.groupby(decile).sum() / baseline_income.groupby(decile).count()
+        income_change.groupby(decile).sum()
+        / baseline_income.groupby(decile).count()
     )
     rel_decile_dict = rel_income_change_by_decile.to_dict()
     avg_decile_dict = avg_income_change_by_decile.to_dict()
@@ -77,10 +85,12 @@ def wealth_decile_impact(baseline: dict, reform: dict) -> dict:
     decile = MicroSeries(baseline["household_wealth_decile"])
     income_change = reform_income - baseline_income
     rel_income_change_by_decile = (
-        income_change.groupby(decile).sum() / baseline_income.groupby(decile).sum()
+        income_change.groupby(decile).sum()
+        / baseline_income.groupby(decile).sum()
     )
     avg_income_change_by_decile = (
-        income_change.groupby(decile).sum() / baseline_income.groupby(decile).count()
+        income_change.groupby(decile).sum()
+        / baseline_income.groupby(decile).count()
     )
     rel_decile_dict = rel_income_change_by_decile.to_dict()
     avg_decile_dict = avg_income_change_by_decile.to_dict()
@@ -174,7 +184,9 @@ def poverty_impact(baseline: dict, reform: dict) -> dict:
             reform=float(reform_deep_poverty[age < 18].mean()),
         ),
         adult=dict(
-            baseline=float(baseline_deep_poverty[(age >= 18) & (age < 65)].mean()),
+            baseline=float(
+                baseline_deep_poverty[(age >= 18) & (age < 65)].mean()
+            ),
             reform=float(reform_deep_poverty[(age >= 18) & (age < 65)].mean()),
         ),
         senior=dict(
@@ -206,7 +218,9 @@ def intra_decile_impact(baseline: dict, reform: dict) -> dict:
     decile = MicroSeries(baseline["household_income_decile"]).values
     absolute_change = (reform_income - baseline_income).values
     capped_baseline_income = np.maximum(baseline_income.values, 1)
-    capped_reform_income = np.maximum(reform_income.values, 1) + absolute_change
+    capped_reform_income = (
+        np.maximum(reform_income.values, 1) + absolute_change
+    )
     income_change = (
         capped_reform_income - capped_baseline_income
     ) / capped_baseline_income
@@ -254,7 +268,9 @@ def intra_wealth_decile_impact(baseline: dict, reform: dict) -> dict:
     decile = MicroSeries(baseline["household_wealth_decile"]).values
     absolute_change = (reform_income - baseline_income).values
     capped_baseline_income = np.maximum(baseline_income.values, 1)
-    capped_reform_income = np.maximum(reform_income.values, 1) + absolute_change
+    capped_reform_income = (
+        np.maximum(reform_income.values, 1) + absolute_change
+    )
     income_change = (
         capped_reform_income - capped_baseline_income
     ) / capped_baseline_income
@@ -363,7 +379,9 @@ def poverty_racial_breakdown(baseline: dict, reform: dict) -> dict:
     reform_poverty = MicroSeries(
         reform["person_in_poverty"], weights=baseline_poverty.weights
     )
-    race = MicroSeries(baseline["race"])  # Can be WHITE, BLACK, HISPANIC, or OTHER.
+    race = MicroSeries(
+        baseline["race"]
+    )  # Can be WHITE, BLACK, HISPANIC, or OTHER.
 
     poverty = dict(
         white=dict(

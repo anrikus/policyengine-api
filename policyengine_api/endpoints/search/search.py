@@ -8,6 +8,8 @@ from sentence_transformers import SentenceTransformer
 import requests
 import logging
 
+print("Entering endpoints/search/search")
+
 model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
 folder = Path(".")
 
@@ -28,6 +30,8 @@ if not (folder / "embeddings.h5").exists():
         ).content
     )
 
+print("Checking and downloading metadata in endpoints/search/search started")
+
 if not (folder / "metadata.csv.gz").exists():
     METADATA_URL = "https://api.github.com/repos/PolicyEngine/policyengine-api/releases/assets/103041106"
     METADATA_PATH = folder / "metadata.csv.gz"
@@ -37,6 +41,8 @@ if not (folder / "metadata.csv.gz").exists():
     log_string = f"Metadata fetch response {response.status_code}, {response.headers}, {response.url}"
     logging.error(log_string)
     METADATA_PATH.write_bytes(response.content)
+
+print("Checking and downloading metadata in endpoints/search/search completed")
 
 metadata_df = pd.read_csv(folder / "metadata.csv.gz", compression="gzip")
 folder = Path(".")
@@ -63,7 +69,9 @@ index_names = [
     "us_variables",
 ]
 
-indexes = {name: faiss.IndexFlatL2(embedding_dimensions) for name in index_names}
+indexes = {
+    name: faiss.IndexFlatL2(embedding_dimensions) for name in index_names
+}
 
 names = {name: [] for name in index_names}
 
@@ -101,3 +109,6 @@ def get_search(country_id: str, k=10):
         "result": [names[index_name][i] for i in indices[0]],
         "status": "ok",
     }
+
+
+print("Exiting endpoints/search/search")

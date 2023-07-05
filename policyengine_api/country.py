@@ -200,7 +200,9 @@ class PolicyEngineCountry:
                     ),
                 }
             elif isinstance(parameter, ParameterScaleBracket):
-                bracket_index = int(parameter.name[parameter.name.index("[") + 1 : -1])
+                bracket_index = int(
+                    parameter.name[parameter.name.index("[") + 1 : -1]
+                )
                 # Set the label to 'first bracket' for the first bracket, 'second bracket' for the second, etc.
                 bracket_label = f"bracket {bracket_index + 1}"
                 parameter_data[parameter.name] = {
@@ -271,7 +273,9 @@ class PolicyEngineCountry:
             for parameter_name in reform:
                 for time_period, value in reform[parameter_name].items():
                     start_instant, end_instant = time_period.split(".")
-                    parameter = get_parameter(system.parameters, parameter_name)
+                    parameter = get_parameter(
+                        system.parameters, parameter_name
+                    )
                     node_type = type(parameter.values_list[-1].value)
                     if node_type == int:
                         node_type = float
@@ -349,8 +353,12 @@ class PolicyEngineCountry:
                 if "axes" in household:
                     pass
                 else:
-                    household[entity_plural][entity_id][variable_name][period] = None
-                    print(f"Error computing {variable_name} for {entity_id}: {e}")
+                    household[entity_plural][entity_id][variable_name][
+                        period
+                    ] = None
+                    print(
+                        f"Error computing {variable_name} for {entity_id}: {e}"
+                    )
 
         return household
 
