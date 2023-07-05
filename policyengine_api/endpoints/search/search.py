@@ -38,8 +38,9 @@ if not (folder / "metadata.csv.gz").exists():
     response = requests.get(
         METADATA_URL, headers={"Accept": "application/octet-stream"}
     )
-    log_string = f"Metadata fetch response {response.status_code}, {response.headers}, {response.url}"
-    logging.error(log_string)
+    print(
+        f"Metadata fetch response {response.status_code}, {response.headers}, {response.url}"
+    )
     METADATA_PATH.write_bytes(response.content)
 
 print("Checking and downloading metadata in endpoints/search/search completed")
