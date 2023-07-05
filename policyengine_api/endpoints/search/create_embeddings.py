@@ -92,5 +92,7 @@ metadata_df[["name", "country_id", "type"]].to_csv(
     "metadata.csv.gz", index=False, compression="gzip"
 )
 
+print(f"metadata created")
+
 with h5py.File("embeddings.h5", "w") as f:
     f.create_dataset("embeddings", data=embeddings)
