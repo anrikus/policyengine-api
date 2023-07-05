@@ -107,9 +107,7 @@ def post_household(country_id: str) -> dict:
     )
 
 
-def get_household_under_policy(
-    country_id: str, household_id: str, policy_id: str
-):
+def get_household_under_policy(country_id: str, household_id: str, policy_id: str):
     """Get a household's output data under a given policy.
 
     Args:
@@ -192,9 +190,7 @@ def get_household_under_policy(
     country = COUNTRIES.get(country_id)
 
     try:
-        result = country.calculate(
-            household["household_json"], policy["policy_json"]
-        )
+        result = country.calculate(household["household_json"], policy["policy_json"])
     except Exception as e:
         logging.exception(e)
         response_body = dict(

@@ -83,9 +83,7 @@ for i, row in tqdm(
 
 # Add embeddings to an 'embeddings' column in the metadata
 
-metadata_df["embedding"] = metadata_df["name"].apply(
-    lambda name: embeddings.get(name)
-)
+metadata_df["embedding"] = metadata_df["name"].apply(lambda name: embeddings.get(name))
 embedding_dimensions = metadata_df["embedding"].values[0].shape[0]
 embeddings = np.array(metadata_df["embedding"].values.tolist()).reshape(
     -1, embedding_dimensions

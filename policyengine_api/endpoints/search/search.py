@@ -32,12 +32,13 @@ if not (folder / "metadata.csv.gz").exists():
     METADATA_URL = "https://api.github.com/repos/PolicyEngine/policyengine-api/releases/assets/103041106"
     METADATA_PATH = folder / "metadata.csv.gz"
     response = requests.get(
-            METADATA_URL, headers={"Accept": "application/octet-stream"}
-        )
-    print(f"Metadata fetch response {response.status_code}, {response.headers}, {response.url}", sys.stderr)
-    METADATA_PATH.write_bytes(
-        response.content
+        METADATA_URL, headers={"Accept": "application/octet-stream"}
     )
+    print(
+        f"Metadata fetch response {response.status_code}, {response.headers}, {response.url}",
+        sys.stderr,
+    )
+    METADATA_PATH.write_bytes(response.content)
 
 metadata_df = pd.read_csv(folder / "metadata.csv.gz", compression="gzip")
 folder = Path(".")
@@ -64,9 +65,7 @@ index_names = [
     "us_variables",
 ]
 
-indexes = {
-    name: faiss.IndexFlatL2(embedding_dimensions) for name in index_names
-}
+indexes = {name: faiss.IndexFlatL2(embedding_dimensions) for name in index_names}
 
 names = {name: [] for name in index_names}
 

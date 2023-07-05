@@ -6,9 +6,7 @@ import json
 
 def compute_general_economy(simulation: Microsimulation) -> dict:
     total_tax = simulation.calculate("household_tax").sum()
-    personal_hh_equiv_income = simulation.calculate(
-        "equiv_household_net_income"
-    )
+    personal_hh_equiv_income = simulation.calculate("equiv_household_net_income")
     household_count_people = simulation.calculate("household_count_people")
     personal_hh_equiv_income.weights *= household_count_people
     try:
@@ -22,12 +20,10 @@ def compute_general_economy(simulation: Microsimulation) -> dict:
     in_top_1_pct = personal_hh_equiv_income.percentile_rank() == 100
     personal_hh_equiv_income.weights /= household_count_people
     top_10_percent_share = (
-        personal_hh_equiv_income[in_top_10_pct].sum()
-        / personal_hh_equiv_income.sum()
+        personal_hh_equiv_income[in_top_10_pct].sum() / personal_hh_equiv_income.sum()
     )
     top_1_percent_share = (
-        personal_hh_equiv_income[in_top_1_pct].sum()
-        / personal_hh_equiv_income.sum()
+        personal_hh_equiv_income[in_top_1_pct].sum() / personal_hh_equiv_income.sum()
     )
     try:
         wealth = simulation.calculate("total_wealth")
@@ -66,17 +62,13 @@ def compute_general_economy(simulation: Microsimulation) -> dict:
         )
         .astype(float)
         .tolist(),
-        "household_income_decile": simulation.calculate(
-            "household_income_decile"
-        )
+        "household_income_decile": simulation.calculate("household_income_decile")
         .astype(int)
         .tolist(),
         "household_wealth_decile": wealth_decile,
         "household_wealth": wealth,
         "in_poverty": simulation.calculate("in_poverty").astype(bool).tolist(),
-        "person_in_poverty": simulation.calculate(
-            "in_poverty", map_to="person"
-        )
+        "person_in_poverty": simulation.calculate("in_poverty", map_to="person")
         .astype(bool)
         .tolist(),
         "person_in_deep_poverty": simulation.calculate(
@@ -86,16 +78,12 @@ def compute_general_economy(simulation: Microsimulation) -> dict:
         .tolist(),
         "poverty_gap": simulation.calculate("poverty_gap").sum(),
         "deep_poverty_gap": simulation.calculate("deep_poverty_gap").sum(),
-        "person_weight": simulation.calculate("person_weight")
-        .astype(float)
-        .tolist(),
+        "person_weight": simulation.calculate("person_weight").astype(float).tolist(),
         "age": simulation.calculate("age").astype(int).tolist(),
         "household_weight": simulation.calculate("household_weight")
         .astype(float)
         .tolist(),
-        "household_count_people": simulation.calculate(
-            "household_count_people"
-        )
+        "household_count_people": simulation.calculate("household_count_people")
         .astype(int)
         .tolist(),
         "gini": float(gini),
@@ -133,13 +121,11 @@ def compute_economy(
     country = COUNTRIES.get(country_id)
     policy_data = json.loads(policy_json)
     if country_id == "us":
-        us_modelled_states = country.tax_benefit_system.modelled_policies[
-            "filtered"
-        ]["state_name"].keys()
+        us_modelled_states = country.tax_benefit_system.modelled_policies["filtered"][
+            "state_name"
+        ].keys()
         us_modelled_states = [state.lower() for state in us_modelled_states]
-        if (region == "us") or (
-            region.lower() not in us_modelled_states + ["nyc"]
-        ):
+        if (region == "us") or (region.lower() not in us_modelled_states + ["nyc"]):
             print(f"Setting state taxes to reported")
             policy_data["simulation.reported_state_income_tax"] = {
                 "2010-01-01.2030-01-01": True
@@ -183,12 +169,9 @@ def compute_economy(
                 simulation.set_input(
                     "household_weight",
                     time_period,
-                    original_household_weight
-                    * (region_values == region.upper()),
+                    original_household_weight * (region_values == region.upper()),
                 )
-    for time_period in simulation.get_holder(
-        "person_weight"
-    ).get_known_periods():
+    for time_period in simulation.get_holder("person_weight").get_known_periods():
         simulation.delete_arrays("person_weight", time_period)
 
     if options.get("target") == "cliff":
