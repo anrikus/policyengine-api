@@ -97,7 +97,7 @@ jobs:
       - name: Setup file system
         run: |
           make setup_filesystem
-          ls
+          echo 
         env:
           POLICYENGINE_DB_PASSWORD: ${{ secrets.POLICYENGINE_DB_PASSWORD }}
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
@@ -114,7 +114,9 @@ jobs:
         with:
           context: .
           push: true
-          tags: us-central1-docker.pkg.dev/policyengine-infrastructure/policyengine-api/policyengine-api-image:${{ github.run_number }}
+          tags: |
+            us-central1-docker.pkg.dev/policyengine-infrastructure/policyengine-api/policyengine-api-image:${{ github.run_number }}
+            us-central1-docker.pkg.dev/policyengine-infrastructure/policyengine-api/policyengine-api-image:latest
       - name: Pull to verify
         run: docker pull us-central1-docker.pkg.dev/policyengine-infrastructure/policyengine-api/policyengine-api-image:${{ github.run_number }}
       - name: Post Job Steps (Always)
