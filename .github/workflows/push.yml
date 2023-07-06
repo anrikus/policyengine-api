@@ -95,7 +95,9 @@ jobs:
         with:
           version: '>= 363.0.0'
       - name: Setup file system
-        run: make setup_filesystem
+        run: |
+          make setup_filesystem
+          ls
         env:
           POLICYENGINE_DB_PASSWORD: ${{ secrets.POLICYENGINE_DB_PASSWORD }}
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
