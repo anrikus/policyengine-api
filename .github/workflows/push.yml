@@ -115,4 +115,7 @@ jobs:
           context: .
           load: true
           tags: us-central1-docker.pkg.dev/policyengine-infrastructure/policyengine-api/policyengine-api-image:${{ github.run_number }}
+      - name: Post Job Steps (Always)
+        if: always()
+        run: make cleanup
         

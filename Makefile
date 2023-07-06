@@ -33,7 +33,7 @@ changelog:
 setup_filesystem:
 	python gcp/export.py
 	cp gcp/policyengine_api/* .
-	rm app.yaml
-	rm Dockerfile
-	rm .gac.json
-	rm .dbpw
+
+cleanup:
+	rm -f .gac.json
+	rm -f .dbpw
