@@ -5,4 +5,5 @@ ENV POLICYENGINE_GITHUB_MICRODATA_AUTH_TOKEN .github_microdata_token
 ENV OPENAI_API_KEY .openai_api_key
 ADD . /app
 RUN cd /app && make install && make test
+RUN chmod +x start.sh
 CMD ./start.sh
