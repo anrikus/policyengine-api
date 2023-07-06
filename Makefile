@@ -17,7 +17,10 @@ deploy:
 	python gcp/export.py
 	gcloud config set app/cloud_build_timeout 1200
 	cp gcp/policyengine_api/* .
-	y | gcloud app deploy --service-account=github-deployment-anrikus-dev@policyengine-infrastructure.iam.gserviceaccount.com --verbosity=debug
+	gcloud artifacts docker config-helper --add-repo=us-central1-docker.pkg.dev/policyengine-infrastructure/policyengine-api
+	docker build -t us-central-1-docker.pkg.dev/policyengine-infrastructure/policyengine-api/policyengine_api:$RUN_NUMBER .
+	docker push us-central-1-docker.pkg.dev/policyengine-infrastructure/policyengine-api/policyengine_api:$RUN_NUMBER
+	# y | gcloud app deploy --service-account=github-deployment-anrikus-dev@policyengine-infrastructure.iam.gserviceaccount.com --verbosity=debug
 	rm app.yaml
 	rm Dockerfile
 	rm .gac.json
