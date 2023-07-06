@@ -104,7 +104,7 @@ jobs:
           POLICYENGINE_GITHUB_MICRODATA_AUTH_TOKEN: ${{ secrets.POLICYENGINE_GITHUB_MICRODATA_AUTH_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       - name: Add repository to docker config
-        run: gcloud auth configure-docker us-central1-docker.pkg.dev
+        run: echo y | gcloud auth configure-docker us-central1-docker.pkg.dev
       # - name: Authenticate docker
       #   run: |
       #     echo "${{ secrets.GCP_SA_KEY }}" | docker login -u _json_key --password-stdin \
