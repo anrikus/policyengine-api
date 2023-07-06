@@ -45,8 +45,34 @@ jobs:
   #         committer_name: Github Actions[bot]
   #         author_name: Github Actions[bot]
   #         message: Update PolicyEngine API
-  deploy:
-    name: Deploy API
+  # deploy:
+  #   name: Deploy API
+  #   runs-on: ubuntu-latest
+  #   # if: |
+  #   #   (github.repository == 'anrikus/policyengine-api')
+  #   #   && (github.event.head_commit.message == 'Update PolicyEngine API')
+  #   steps:
+  #     - name: Checkout repo
+  #       uses: actions/checkout@v3
+  #     - name: Setup Python
+  #       uses: actions/setup-python@v2
+  #       with:
+  #         python-version: 3.9
+  #     - name: GCP authentication
+  #       uses: 'google-github-actions/auth@v1'
+  #       with:
+  #         credentials_json: '${{ secrets.GCP_SA_KEY }}'
+  #     - name: Set up GCloud
+  #       uses: 'google-github-actions/setup-gcloud@v1'
+  #     - name: Deploy
+  #       run: make deploy
+  #       env:
+  #         POLICYENGINE_DB_PASSWORD: ${{ secrets.POLICYENGINE_DB_PASSWORD }}
+  #         GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
+  #         POLICYENGINE_GITHUB_MICRODATA_AUTH_TOKEN: ${{ secrets.POLICYENGINE_GITHUB_MICRODATA_AUTH_TOKEN }}
+  #         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  build-image:
+    name: Build and push docker image
     runs-on: ubuntu-latest
     # if: |
     #   (github.repository == 'anrikus/policyengine-api')
@@ -58,16 +84,33 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.9
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
       - name: GCP authentication
         uses: 'google-github-actions/auth@v1'
         with:
           credentials_json: '${{ secrets.GCP_SA_KEY }}'
-      - name: Set up GCloud
+      - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v1'
-      - name: Deploy
-        run: make deploy
+        with:
+          version: '>= 363.0.0'
+      - name: Setup file system
+        run: make setup_filesystem
         env:
           POLICYENGINE_DB_PASSWORD: ${{ secrets.POLICYENGINE_DB_PASSWORD }}
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
           POLICYENGINE_GITHUB_MICRODATA_AUTH_TOKEN: ${{ secrets.POLICYENGINE_GITHUB_MICRODATA_AUTH_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      - name: Add repository to docker config
+        run: gcloud auth configure-docker us-central1-docker.pkg.dev
+      - name: Authenticate docker
+        run: |
+          echo ${{ secrets.GCP_SA_KEY }} | docker login -u _json_key --password-stdin \
+          https://us-central1-docker.pkg.dev
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          load: true
+          tags: us-central1-docker.pkg.dev/policyengine-infrastructure/policyengine-api/policyengine-api-image:${{ github.run_number }}
+        
