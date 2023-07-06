@@ -33,6 +33,7 @@ changelog:
 setup_filesystem:
 	python gcp/export.py
 	cp gcp/policyengine_api/* .
+	echo .git >> .dockerignore
 
 cleanup:
 	rm -f .gac.json
