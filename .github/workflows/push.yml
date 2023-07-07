@@ -113,6 +113,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
+          file: ./compute_engine_Dockerfile
           push: true
           tags: |
             us-central1-docker.pkg.dev/policyengine-infrastructure/policyengine-api/policyengine-api-image:${{ github.run_number }}
